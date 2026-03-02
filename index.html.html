@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIGate - بوابة الذكاء الاصطناعي</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #05070f;
+    --bg2: #0a0d1a;
+    --bg3: #0f1222;
+    --card: #111629;
+    --card-hover: #161d35;
+    --border: rgba(99,179,237,0.12);
+    --border-hover: rgba(99,179,237,0.35);
+    --accent: #4fc3f7;
+    --accent2: #7c83ff;
+    --accent3: #00e5c0;
+    --text: #e8eef7;
+    --text2: #8a9bb5;
+    --text3: #5a6b84;
+    --glow: rgba(79,195,247,0.15);
+    --glow2: rgba(124,131,255,0.1);
+  }
+  [data-theme="light"] {
+    --bg: #f0f4ff;
+    --bg2: #e8eef8;
+    --bg3: #dde5f5;
+    --card: #ffffff;
+    --card-hover: #f5f8ff;
+    --border: rgba(60,120,200,0.15);
+    --border-hover: rgba(60,120,200,0.4);
+    --accent: #1565c0;
+    --accent2: #5c35cc;
+    --accent3: #00897b;
+    --text: #0d1b2a;
+    --text2: #3a5070;
+    --text3: #7090b0;
+    --glow: rgba(21,101,192,0.08);
+    --glow2: rgba(92,53,204,0.08);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: 'Cairo', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    transition: background 0.4s, color 0.4s;
+  }
+
+  /* BG Grid */
+  body::before {
+    content:'';
+    position:fixed; inset:0;
+    background-image:
+      linear-gradient(rgba(79,195,247,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(79,195,247,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events:none;
+    z-index:0;
+  }
+  [data-theme="light"] body::before {
+    background-image:
+      linear-gradient(rgba(21,101,192,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(21,101,192,0.04) 1px, transparent 1px);
+  }
+
+  /* NAVBAR */
+  nav {
+    position: sticky; top:0; z-index:100;
+    background: rgba(5,7,15,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    height: 64px;
+    display: flex; align-items: center; justify-content: space-between;
+    transition: background 0.4s;
+  }
+  [data-theme="light"] nav {
+    background: rgba(240,244,255,0.9);
+  }
+  .logo {
+    display:flex; align-items:center; gap:10px;
+    font-size:1.5rem; font-weight:900; letter-spacing:-0.5px;
+    text-decoration:none; color:var(--text);
+  }
+  .logo-icon {
+    width:36px; height:36px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius:10px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.1rem;
+    box-shadow: 0 0 20px var(--glow);
+    animation: logoPulse 3s ease-in-out infinite;
+  }
+  @keyframes logoPulse { 0%,100%{box-shadow:0 0 20px var(--glow)} 50%{box-shadow:0 0 35px rgba(79,195,247,0.3)} }
+
+  .nav-actions { display:flex; align-items:center; gap:12px; }
+  .lang-btn, .theme-btn {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text2);
+    padding: 6px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family:'Cairo',sans-serif;
+    font-size:0.85rem;
+    transition: all 0.2s;
+  }
+  .lang-btn:hover, .theme-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--glow);
+  }
+  .theme-btn { padding:6px 10px; font-size:1rem; }
+
+  /* HERO */
+  .hero {
+    position:relative; z-index:1;
+    text-align:center;
+    padding: 80px 2rem 60px;
+  }
+  .hero-badge {
+    display:inline-flex; align-items:center; gap:8px;
+    background: linear-gradient(135deg, rgba(79,195,247,0.12), rgba(124,131,255,0.12));
+    border: 1px solid rgba(79,195,247,0.25);
+    border-radius:50px; padding:6px 18px;
+    font-size:0.8rem; color:var(--accent);
+    margin-bottom:24px;
+    animation: fadeInDown 0.6s ease;
+  }
+  .hero-badge::before { content:'●'; font-size:0.5rem; animation:blink 1.5s infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  h1 {
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    font-weight:900;
+    line-height:1.1;
+    margin-bottom:20px;
+    animation: fadeInUp 0.7s ease;
+  }
+  h1 span {
+    background: linear-gradient(135deg, var(--accent), var(--accent2), var(--accent3));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    background-clip:text;
+  }
+  .hero-sub {
+    font-size:1.1rem; color:var(--text2);
+    max-width:600px; margin:0 auto 40px;
+    line-height:1.8;
+    animation: fadeInUp 0.8s ease;
+  }
+
+  /* SEARCH */
+  .search-wrap {
+    max-width:620px; margin:0 auto 16px;
+    position:relative;
+    animation: fadeInUp 0.9s ease;
+  }
+  .search-wrap input {
+    width:100%; padding:16px 56px 16px 24px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius:16px;
+    color:var(--text); font-family:'Cairo',sans-serif; font-size:1rem;
+    outline:none; transition: all 0.3s;
+  }
+  .search-wrap input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(79,195,247,0.1);
+  }
+  .search-icon {
+    position:absolute; left:18px; top:50%; transform:translateY(-50%);
+    color:var(--text3); font-size:1.2rem; pointer-events:none;
+  }
+  [dir="ltr"] .search-icon { left:auto; right:18px; }
+
+  .stats-row {
+    display:flex; justify-content:center; gap:32px;
+    margin-top:12px; animation: fadeInUp 1s ease;
+  }
+  .stat { text-align:center; }
+  .stat-num { font-size:1.3rem; font-weight:700; color:var(--accent); }
+  .stat-lbl { font-size:0.75rem; color:var(--text3); }
+
+  @keyframes fadeInDown { from{opacity:0;transform:translateY(-20px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fadeInUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+  /* CATEGORIES */
+  .section { position:relative; z-index:1; padding:20px 2rem 0; max-width:1400px; margin:0 auto; }
+  .section-title {
+    font-size:1.4rem; font-weight:700; margin-bottom:16px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .section-title::after {
+    content:''; flex:1; height:1px;
+    background: linear-gradient(to left, transparent, var(--border));
+  }
+  [dir="ltr"] .section-title::after { background: linear-gradient(to right, transparent, var(--border)); }
+
+  .cats-scroll {
+    display:flex; gap:10px; overflow-x:auto; padding-bottom:8px;
+    scrollbar-width:thin; scrollbar-color:var(--border) transparent;
+  }
+  .cat-chip {
+    flex-shrink:0;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius:50px; padding:8px 18px;
+    font-family:'Cairo',sans-serif; font-size:0.85rem;
+    color:var(--text2); cursor:pointer;
+    transition:all 0.2s; white-space:nowrap;
+    display:flex; align-items:center; gap:6px;
+  }
+  .cat-chip:hover, .cat-chip.active {
+    background: linear-gradient(135deg, rgba(79,195,247,0.15), rgba(124,131,255,0.1));
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: 0 0 16px rgba(79,195,247,0.1);
+  }
+
+  /* TOOLS GRID */
+  .tools-grid {
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px,1fr));
+    gap:16px; margin-top:20px;
+  }
+
+  .tool-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius:16px; padding:20px;
+    cursor:pointer; transition:all 0.3s;
+    position:relative; overflow:hidden;
+    animation: cardIn 0.4s ease both;
+  }
+  .tool-card:hover {
+    border-color: var(--border-hover);
+    background: var(--card-hover);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.3), 0 0 0 1px var(--border-hover);
+  }
+  [data-theme="light"] .tool-card:hover {
+    box-shadow: 0 8px 30px rgba(0,0,0,0.1), 0 0 0 1px var(--border-hover);
+  }
+  .tool-card::before {
+    content:'';
+    position:absolute; top:0; left:0; right:0; height:2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    opacity:0; transition:opacity 0.3s;
+  }
+  .tool-card:hover::before { opacity:1; }
+
+  @keyframes cardIn { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+
+  .tool-header { display:flex; align-items:flex-start; gap:14px; margin-bottom:12px; }
+  .tool-icon {
+    width:48px; height:48px; border-radius:12px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.4rem; flex-shrink:0;
+    border: 1px solid var(--border);
+    background: var(--bg2);
+    overflow:hidden; position:relative;
+  }
+  .tool-icon img {
+    width:32px; height:32px; object-fit:contain;
+    border-radius:6px;
+  }
+  .tool-icon img.logo-error {
+    display:none;
+  }
+  .tool-icon .fallback-emoji {
+    font-size:1.4rem; position:absolute;
+  }
+  .tool-icon img + .fallback-emoji { display:none; }
+  .tool-icon img.logo-error + .fallback-emoji { display:flex; }
+  .tool-meta { flex:1; min-width:0; }
+  .tool-name { font-weight:700; font-size:1rem; margin-bottom:3px; }
+  .tool-tags { display:flex; gap:5px; flex-wrap:wrap; }
+  .tag {
+    font-size:0.7rem; padding:2px 8px; border-radius:20px;
+    background: rgba(79,195,247,0.08); color:var(--accent);
+    border: 1px solid rgba(79,195,247,0.15);
+  }
+  .tool-desc {
+    font-size:0.85rem; color:var(--text2);
+    line-height:1.6; margin-bottom:14px;
+  }
+  .tool-footer { display:flex; align-items:center; justify-content:space-between; }
+  .tool-price {
+    font-size:0.75rem; padding:3px 10px; border-radius:20px; font-weight:600;
+  }
+  .price-free { background:rgba(0,229,192,0.1); color:var(--accent3); border:1px solid rgba(0,229,192,0.2); }
+  .price-paid { background:rgba(255,168,0,0.1); color:#ffa800; border:1px solid rgba(255,168,0,0.2); }
+  .price-freemium { background:rgba(124,131,255,0.1); color:var(--accent2); border:1px solid rgba(124,131,255,0.2); }
+
+  .tool-rating { display:flex; align-items:center; gap:4px; font-size:0.8rem; color:var(--text3); }
+  .stars { color:#ffa800; }
+
+  .visit-btn {
+    background: transparent; border: 1px solid var(--border);
+    color:var(--text2); padding:6px 14px; border-radius:8px;
+    font-family:'Cairo',sans-serif; font-size:0.8rem; cursor:pointer;
+    transition:all 0.2s; text-decoration:none; display:inline-flex; align-items:center; gap:5px;
+  }
+  .visit-btn:hover { border-color:var(--accent); color:var(--accent); background:rgba(79,195,247,0.05); }
+
+  /* FEATURED BANNER */
+  .featured-banner {
+    background: linear-gradient(135deg, rgba(79,195,247,0.08), rgba(124,131,255,0.08));
+    border: 1px solid rgba(79,195,247,0.2);
+    border-radius:20px; padding:28px;
+    display:grid; grid-template-columns:1fr auto;
+    gap:20px; align-items:center; margin-bottom:32px;
+    position:relative; overflow:hidden;
+  }
+  .featured-banner::after {
+    content:'🤖';
+    position:absolute; right:-10px; top:50%; transform:translateY(-50%);
+    font-size:8rem; opacity:0.04;
+    pointer-events:none;
+  }
+  [dir="ltr"] .featured-banner::after { right:auto; left:-10px; }
+  .fb-label { font-size:0.75rem; color:var(--accent); font-weight:600; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; }
+  .fb-title { font-size:1.6rem; font-weight:800; margin-bottom:8px; }
+  .fb-desc { color:var(--text2); font-size:0.9rem; line-height:1.7; }
+
+  /* ROADMAP */
+  .roadmap {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius:20px; padding:28px; margin-top:32px;
+  }
+  .roadmap-title { font-size:1.2rem; font-weight:700; margin-bottom:20px; }
+  .roadmap-steps {
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+    gap:16px;
+  }
+  .step {
+    background: var(--bg2); border:1px solid var(--border);
+    border-radius:12px; padding:16px;
+    display:flex; flex-direction:column; gap:8px;
+    transition:all 0.3s;
+  }
+  .step:hover { border-color:var(--accent); }
+  .step-num {
+    width:28px; height:28px; border-radius:8px;
+    background: linear-gradient(135deg,var(--accent),var(--accent2));
+    display:flex; align-items:center; justify-content:center;
+    font-size:0.75rem; font-weight:700; color:#fff;
+    flex-shrink:0;
+  }
+  .step-title { font-weight:600; font-size:0.9rem; }
+  .step-desc { font-size:0.8rem; color:var(--text2); line-height:1.6; }
+
+  /* FOOTER */
+  footer {
+    position:relative; z-index:1;
+    margin-top:60px; padding:40px 2rem;
+    border-top:1px solid var(--border);
+    text-align:center; color:var(--text3); font-size:0.85rem;
+  }
+  footer span { color:var(--accent); }
+
+  /* NO RESULTS */
+  .no-results {
+    grid-column:1/-1; text-align:center; padding:60px;
+    color:var(--text3);
+  }
+  .no-results-icon { font-size:3rem; margin-bottom:12px; }
+
+  /* COUNT BADGE */
+  .count-badge {
+    background: var(--bg2); border:1px solid var(--border);
+    border-radius:8px; padding:4px 12px;
+    font-size:0.8rem; color:var(--text2); margin-bottom:12px; display:inline-block;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width:5px; height:5px; }
+  ::-webkit-scrollbar-track { background:transparent; }
+  ::-webkit-scrollbar-thumb { background:var(--border); border-radius:10px; }
+
+  @media(max-width:640px) {
+    .hero { padding:50px 1rem 40px; }
+    .stats-row { gap:16px; }
+    .featured-banner { grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="logo" href="#">
+    <div class="logo-icon">⚡</div>
+    <span>AI<span style="color:var(--accent)">Gate</span></span>
+  </a>
+  <div class="nav-actions">
+    <button class="theme-btn" id="themeBtn" title="تبديل الوضع">🌙</button>
+    <button class="lang-btn" id="langBtn">English</button>
+  </div>
+</nav>
+
+<main>
+  <div class="hero">
+    <div class="hero-badge" id="heroBadge">🔴 500+ أداة ذكاء اصطناعي مجمّعة</div>
+    <h1 id="heroTitle">بوابتك إلى عالم<br><span>الذكاء الاصطناعي</span></h1>
+    <p class="hero-sub" id="heroSub">اكتشف أفضل 500 أداة ذكاء اصطناعي منظّمة في أقسام واضحة. خارطة طريقك الشاملة للإنتاجية والإبداع والتطوير.</p>
+    <div class="search-wrap">
+      <input type="text" id="searchInput" placeholder="ابحث عن أداة...">
+      <span class="search-icon">🔍</span>
+    </div>
+    <div class="stats-row">
+      <div class="stat"><div class="stat-num" id="s1">500+</div><div class="stat-lbl" id="sl1">أداة مجمّعة</div></div>
+      <div class="stat"><div class="stat-num" id="s2">20+</div><div class="stat-lbl" id="sl2">قسم متخصص</div></div>
+      <div class="stat"><div class="stat-num" id="s3">مجاني</div><div class="stat-lbl" id="sl3">بدون تسجيل</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="featured-banner">
+      <div>
+        <div class="fb-label" id="fbLabel">⭐ الأداة المميزة</div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+          <img src="https://www.google.com/s2/favicons?domain=chat.openai.com&sz=64" 
+               style="width:40px;height:40px;border-radius:10px;border:1px solid var(--border);" 
+               alt="ChatGPT" onerror="this.style.display='none'">
+          <div class="fb-title" id="fbTitle">ChatGPT-4o — الأكثر استخداماً</div>
+        </div>
+        <div class="fb-desc" id="fbDesc">نموذج لغوي متعدد الوسائط من OpenAI يدعم النص والصوت والصورة. مثالي للمحادثة والكتابة والبرمجة والتحليل.</div>
+      </div>
+      <a href="https://chat.openai.com" target="_blank" class="visit-btn" id="fbBtn">زيارة الموقع ↗</a>
+    </div>
+
+    <div class="section-title" id="catTitle">📁 الأقسام</div>
+    <div class="cats-scroll" id="catsContainer"></div>
+  </div>
+
+  <div class="section" style="margin-top:24px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+      <div class="section-title" id="toolsTitle" style="margin-bottom:0">🛠️ الأدوات</div>
+      <div class="count-badge" id="countBadge">عرض كل الأدوات</div>
+    </div>
+    <div class="tools-grid" id="toolsGrid"></div>
+  </div>
+
+  <!-- ROADMAP -->
+  <div class="section" style="margin-top:32px;">
+    <div class="roadmap">
+      <div class="roadmap-title" id="roadmapTitle">🗺️ خارطة الطريق — كيف تبدأ مع الذكاء الاصطناعي؟</div>
+      <div class="roadmap-steps" id="roadmapSteps"></div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div><span>AIGate</span> — بوابة الذكاء الاصطناعي الشاملة · جميع الأدوات محدّثة 2025</div>
+</footer>
+
+<script>
+const i18n = {
+  ar: {
+    heroBadge: "🔴 500+ أداة ذكاء اصطناعي مجمّعة",
+    heroTitle: "بوابتك إلى عالم<br><span>الذكاء الاصطناعي</span>",
+    heroSub: "اكتشف أفضل 500 أداة ذكاء اصطناعي منظّمة في أقسام واضحة. خارطة طريقك الشاملة للإنتاجية والإبداع والتطوير.",
+    searchPlaceholder: "ابحث عن أداة...",
+    s1:"500+",sl1:"أداة مجمّعة",s2:"20+",sl2:"قسم متخصص",s3:"مجاني",sl3:"بدون تسجيل",
+    fbLabel:"⭐ الأداة المميزة",
+    fbTitle:"ChatGPT-4o — الأكثر استخداماً",
+    fbDesc:"نموذج لغوي متعدد الوسائط من OpenAI يدعم النص والصوت والصورة. مثالي للمحادثة والكتابة والبرمجة والتحليل.",
+    fbBtn:"زيارة الموقع ↗",
+    catTitle:"📁 الأقسام",
+    toolsTitle:"🛠️ الأدوات",
+    roadmapTitle:"🗺️ خارطة الطريق — كيف تبدأ مع الذكاء الاصطناعي؟",
+    showAll:"عرض كل الأدوات",
+    noResults:"لا توجد أدوات مطابقة",
+    visit:"زيارة ↗",
+    free:"مجاني",paid:"مدفوع",freemium:"مجاني جزئي",
+    langBtn:"English",
+    dir:"rtl", lang:"ar"
+  },
+  en: {
+    heroBadge: "🔴 500+ AI Tools Curated",
+    heroTitle: "Your Gateway to the<br><span>AI Universe</span>",
+    heroSub: "Discover the best 500 AI tools organized in clear categories. Your complete roadmap for productivity, creativity, and development.",
+    searchPlaceholder: "Search for a tool...",
+    s1:"500+",sl1:"Tools Curated",s2:"20+",sl2:"Specialized Sections",s3:"Free",sl3:"No Sign-up",
+    fbLabel:"⭐ Featured Tool",
+    fbTitle:"ChatGPT-4o — Most Used",
+    fbDesc:"Multimodal language model from OpenAI supporting text, audio, and image. Perfect for conversation, writing, coding, and analysis.",
+    fbBtn:"Visit Site ↗",
+    catTitle:"📁 Categories",
+    toolsTitle:"🛠️ Tools",
+    roadmapTitle:"🗺️ Roadmap — How to Start with AI?",
+    showAll:"Showing all tools",
+    noResults:"No matching tools found",
+    visit:"Visit ↗",
+    free:"Free",paid:"Paid",freemium:"Freemium",
+    langBtn:"عربي",
+    dir:"ltr", lang:"en"
+  }
+};
+
+const categories = [
+  { id:"all", icon:"🌐", ar:"الكل", en:"All" },
+  { id:"chat", icon:"💬", ar:"الدردشة والمحادثة", en:"Chat & Conversation" },
+  { id:"image", icon:"🎨", ar:"توليد الصور", en:"Image Generation" },
+  { id:"video", icon:"🎬", ar:"إنشاء الفيديو", en:"Video Creation" },
+  { id:"audio", icon:"🎵", ar:"الصوت والموسيقى", en:"Audio & Music" },
+  { id:"code", icon:"💻", ar:"البرمجة والتطوير", en:"Coding & Dev" },
+  { id:"writing", icon:"✍️", ar:"الكتابة والمحتوى", en:"Writing & Content" },
+  { id:"research", icon:"🔬", ar:"البحث والتحليل", en:"Research & Analysis" },
+  { id:"design", icon:"🖌️", ar:"التصميم الجرافيكي", en:"Graphic Design" },
+  { id:"seo", icon:"📈", ar:"التسويق والسيو", en:"Marketing & SEO" },
+  { id:"productivity", icon:"⚡", ar:"الإنتاجية", en:"Productivity" },
+  { id:"edu", icon:"📚", ar:"التعليم والتدريب", en:"Education" },
+  { id:"business", icon:"💼", ar:"الأعمال والمبيعات", en:"Business & Sales" },
+  { id:"data", icon:"📊", ar:"البيانات والتحليلات", en:"Data & Analytics" },
+  { id:"avatar", icon:"👤", ar:"الشخصيات الرقمية", en:"Digital Avatars" },
+  { id:"translate", icon:"🌍", ar:"الترجمة", en:"Translation" },
+  { id:"present", icon:"📑", ar:"العروض التقديمية", en:"Presentations" },
+  { id:"legal", icon:"⚖️", ar:"القانون", en:"Legal" },
+  { id:"health", icon:"🏥", ar:"الصحة", en:"Health" },
+  { id:"voice", icon:"🎤", ar:"تحويل الصوت للنص", en:"Voice to Text" },
+];
+
+const tools = [
+  // CHAT
+  {id:1,cat:"chat",icon:"🤖",logo:"chat.openai.com",ar:"ChatGPT",en:"ChatGPT",descAr:"أشهر نموذج ذكاء اصطناعي محادثة من OpenAI، يدعم كتابة الأكواد والتحليل والإجابة على كل الأسئلة.",descEn:"The most famous AI chatbot by OpenAI, supports coding, analysis, and answering any question.",tags:["GPT-4o","OpenAI"],price:"freemium",rating:4.9,url:"https://chat.openai.com"},
+  {id:2,cat:"chat",icon:"🧠",logo:"claude.ai",ar:"Claude",en:"Claude",descAr:"مساعد ذكاء اصطناعي من Anthropic معروف بالأمان والتحليل العميق والردود المطوّلة.",descEn:"AI assistant by Anthropic known for safety, deep analysis, and long-form responses.",tags:["Sonnet","Anthropic"],price:"freemium",rating:4.8,url:"https://claude.ai"},
+  {id:3,cat:"chat",icon:"💎",logo:"gemini.google.com",ar:"Gemini",en:"Gemini",descAr:"نموذج Google متعدد الوسائط يتكامل مع خدمات Google Drive وDocs.",descEn:"Google's multimodal model integrating with Drive and Docs.",tags:["Google","Multimodal"],price:"freemium",rating:4.7,url:"https://gemini.google.com"},
+  {id:4,cat:"chat",icon:"🌊",logo:"x.ai",ar:"Grok",en:"Grok",descAr:"ذكاء اصطناعي من xAI (إيلون ماسك) مرتبط بـ X بوصول للإنترنت الفوري.",descEn:"AI by xAI (Elon Musk) connected to X with real-time internet.",tags:["xAI","Real-time"],price:"freemium",rating:4.5,url:"https://grok.x.ai"},
+  {id:5,cat:"chat",icon:"🔮",logo:"perplexity.ai",ar:"Perplexity",en:"Perplexity AI",descAr:"محرك بحث مدعوم بالذكاء الاصطناعي يعطي إجابات مباشرة مع مصادر موثوقة.",descEn:"AI-powered search engine giving direct answers with verified sources.",tags:["Search","RAG"],price:"freemium",rating:4.7,url:"https://perplexity.ai"},
+  {id:6,cat:"chat",icon:"🏔️",logo:"mistral.ai",ar:"Mistral",en:"Mistral AI",descAr:"نماذج لغوية أوروبية مفتوحة المصدر عالية الأداء وسريعة.",descEn:"High-performance open-source European language models.",tags:["Open-source","Fast"],price:"freemium",rating:4.4,url:"https://mistral.ai"},
+  {id:7,cat:"chat",icon:"🦙",logo:"meta.ai",ar:"Meta Llama",en:"Meta Llama",descAr:"نموذج مفتوح المصدر من Meta يمكن تشغيله محلياً.",descEn:"Open-source model from Meta that can run locally.",tags:["Meta","Open-source"],price:"free",rating:4.5,url:"https://llama.meta.com"},
+  {id:8,cat:"chat",icon:"🌐",logo:"copilot.microsoft.com",ar:"Copilot",en:"Microsoft Copilot",descAr:"مساعد Microsoft المدمج في Office 365 وWindows يستخدم GPT-4.",descEn:"Microsoft assistant integrated in Office 365 and Windows using GPT-4.",tags:["Microsoft","GPT-4"],price:"freemium",rating:4.6,url:"https://copilot.microsoft.com"},
+
+  // IMAGE
+  {id:20,cat:"image",icon:"🎨",logo:"midjourney.com",ar:"Midjourney",en:"Midjourney",descAr:"أفضل أداة لتوليد الصور الفنية الاحترافية عبر Discord.",descEn:"The best tool for professional artistic image generation via Discord.",tags:["Art","Discord"],price:"paid",rating:4.9,url:"https://midjourney.com"},
+  {id:21,cat:"image",icon:"🖼️",logo:"openai.com",ar:"DALL-E 3",en:"DALL-E 3",descAr:"نموذج OpenAI لتوليد الصور من النص بدقة عالية ومفهوم إبداعي.",descEn:"OpenAI's image generation model with high accuracy and creative vision.",tags:["OpenAI","Text2Image"],price:"freemium",rating:4.7,url:"https://openai.com/dall-e-3"},
+  {id:22,cat:"image",icon:"⚡",logo:"stability.ai",ar:"Stable Diffusion",en:"Stable Diffusion",descAr:"نموذج مفتوح المصدر لتوليد الصور يمكن تشغيله محلياً بالكامل.",descEn:"Open-source image generation model that can run fully locally.",tags:["Open-source","Local"],price:"free",rating:4.6,url:"https://stability.ai"},
+  {id:23,cat:"image",icon:"🌟",logo:"firefly.adobe.com",ar:"Adobe Firefly",en:"Adobe Firefly",descAr:"أداة Adobe لتوليد الصور والتعديل التلقائي مدمجة في Photoshop.",descEn:"Adobe's tool for generating and auto-editing images, built into Photoshop.",tags:["Adobe","Photoshop"],price:"freemium",rating:4.7,url:"https://firefly.adobe.com"},
+  {id:24,cat:"image",icon:"🎭",logo:"leonardo.ai",ar:"Leonardo AI",en:"Leonardo AI",descAr:"منصة ضخمة لتوليد الصور للألعاب والتصميم بنماذج متخصصة.",descEn:"Large platform for image generation for games and design with specialized models.",tags:["Games","Design"],price:"freemium",rating:4.6,url:"https://leonardo.ai"},
+  {id:25,cat:"image",icon:"🖌️",logo:"ideogram.ai",ar:"Ideogram",en:"Ideogram",descAr:"توليد صور مع نصوص مدمجة دقيقة للتصاميم والشعارات.",descEn:"Image generation with precise embedded text for designs and logos.",tags:["Text","Logo"],price:"freemium",rating:4.5,url:"https://ideogram.ai"},
+  {id:26,cat:"image",icon:"✨",logo:"blackforestlabs.ai",ar:"Flux",en:"Flux (Black Forest)",descAr:"أحدث نموذج توليد صور فائق الواقعية من Black Forest Labs.",descEn:"The latest ultra-realistic image generation model from Black Forest Labs.",tags:["Realistic","New"],price:"freemium",rating:4.8,url:"https://blackforestlabs.ai"},
+  {id:27,cat:"image",icon:"🎪",logo:"canva.com",ar:"Canva AI",en:"Canva AI",descAr:"تصميم جرافيكي مدعوم بالذكاء الاصطناعي لأي شخص حتى بدون خبرة.",descEn:"AI-powered graphic design for anyone, even without experience.",tags:["Canva","Design"],price:"freemium",rating:4.8,url:"https://canva.com"},
+
+  // VIDEO
+  {id:40,cat:"video",icon:"🎬",logo:"openai.com",ar:"Sora",en:"Sora (OpenAI)",descAr:"نموذج OpenAI لتوليد مقاطع فيديو واقعية من النص.",descEn:"OpenAI's model for generating realistic videos from text.",tags:["OpenAI","Text2Video"],price:"paid",rating:4.7,url:"https://openai.com/sora"},
+  {id:41,cat:"video",icon:"🌊",logo:"runwayml.com",ar:"Runway",en:"Runway Gen-3",descAr:"منصة رائدة لتوليد الفيديو بالذكاء الاصطناعي للإنتاج الاحترافي.",descEn:"Leading platform for AI video generation for professional production.",tags:["Gen-3","Pro"],price:"freemium",rating:4.7,url:"https://runwayml.com"},
+  {id:42,cat:"video",icon:"🎥",logo:"klingai.com",ar:"Kling AI",en:"Kling AI",descAr:"توليد فيديو صيني عالي الجودة بتفاصيل واقعية مذهلة.",descEn:"High-quality Chinese AI video generation with stunning realistic details.",tags:["China","Realistic"],price:"freemium",rating:4.6,url:"https://klingai.com"},
+  {id:43,cat:"video",icon:"🎞️",logo:"pika.art",ar:"Pika",en:"Pika Labs",descAr:"تحويل الصور والنصوص إلى فيديوهات قصيرة بسهولة.",descEn:"Convert images and text into short videos easily.",tags:["Quick","Easy"],price:"freemium",rating:4.5,url:"https://pika.art"},
+  {id:44,cat:"video",icon:"🎦",logo:"heygen.com",ar:"HeyGen",en:"HeyGen",descAr:"إنشاء فيديوهات بشخصيات بشرية واقعية ومتزامنة مع الصوت.",descEn:"Create videos with realistic human avatars synchronized with audio.",tags:["Avatar","Sync"],price:"freemium",rating:4.7,url:"https://heygen.com"},
+  {id:45,cat:"video",icon:"🌀",logo:"lumalabs.ai",ar:"Luma Dream Machine",en:"Luma Dream Machine",descAr:"توليد فيديو سينمائي عالي الجودة مجاني بشكل جزئي.",descEn:"High-quality cinematic video generation, partially free.",tags:["Cinematic","Luma"],price:"freemium",rating:4.6,url:"https://lumalabs.ai"},
+
+  // AUDIO
+  {id:60,cat:"audio",icon:"🎵",logo:"suno.ai",ar:"Suno",en:"Suno AI",descAr:"توليد أغانٍ كاملة بالكلمات والألحان من وصف نصي فقط.",descEn:"Generate complete songs with lyrics and melodies from text only.",tags:["Music","Lyrics"],price:"freemium",rating:4.8,url:"https://suno.ai"},
+  {id:61,cat:"audio",icon:"🎶",logo:"udio.com",ar:"Udio",en:"Udio",descAr:"منافس Suno لإنشاء الموسيقى الاحترافية بذكاء اصطناعي.",descEn:"Suno competitor for creating professional AI music.",tags:["Music","HQ"],price:"freemium",rating:4.7,url:"https://udio.com"},
+  {id:62,cat:"audio",icon:"🔊",logo:"elevenlabs.io",ar:"ElevenLabs",en:"ElevenLabs",descAr:"أفضل تقنية لتحويل النص إلى كلام بصوت بشري واقعي.",descEn:"Best text-to-speech technology with realistic human voice.",tags:["TTS","Clone"],price:"freemium",rating:4.9,url:"https://elevenlabs.io"},
+  {id:63,cat:"audio",icon:"🎙️",logo:"podcast.adobe.com",ar:"Adobe Podcast",en:"Adobe Podcast",descAr:"تحسين جودة الصوت وإزالة الضوضاء بذكاء اصطناعي من Adobe.",descEn:"AI audio quality enhancement and noise removal from Adobe.",tags:["Adobe","Enhance"],price:"free",rating:4.7,url:"https://podcast.adobe.com"},
+  {id:64,cat:"audio",icon:"🎸",logo:"mubert.com",ar:"Mubert",en:"Mubert",descAr:"توليد موسيقى خلفية غير محدودة لمقاطع الفيديو والبودكاست.",descEn:"Generate unlimited background music for videos and podcasts.",tags:["Background","Royalty-free"],price:"freemium",rating:4.4,url:"https://mubert.com"},
+
+  // CODE
+  {id:80,cat:"code",icon:"💻",logo:"github.com",ar:"GitHub Copilot",en:"GitHub Copilot",descAr:"مساعد برمجة من GitHub مدمج في VSCode يقترح الكود تلقائياً.",descEn:"GitHub coding assistant integrated in VSCode, auto-suggests code.",tags:["GitHub","VSCode"],price:"paid",rating:4.8,url:"https://github.com/features/copilot"},
+  {id:81,cat:"code",icon:"🚀",logo:"cursor.sh",ar:"Cursor",en:"Cursor IDE",descAr:"بيئة تطوير مبنية على GPT-4 تفهم كامل مشروعك وتكتب الكود بسرعة.",descEn:"GPT-4-powered IDE that understands your whole project and codes fast.",tags:["IDE","GPT-4"],price:"freemium",rating:4.9,url:"https://cursor.sh"},
+  {id:82,cat:"code",icon:"🤖",logo:"replit.com",ar:"Replit AI",en:"Replit AI",descAr:"بيئة برمجة سحابية بذكاء اصطناعي تعمل مباشرة من المتصفح.",descEn:"Cloud programming environment with AI that works directly from the browser.",tags:["Cloud","Browser"],price:"freemium",rating:4.6,url:"https://replit.com"},
+  {id:83,cat:"code",icon:"🔧",logo:"tabnine.com",ar:"Tabnine",en:"Tabnine",descAr:"إكمال الكود التلقائي بذكاء اصطناعي يعمل على جميع لغات البرمجة.",descEn:"AI autocomplete for code supporting all programming languages.",tags:["Autocomplete","All-languages"],price:"freemium",rating:4.5,url:"https://tabnine.com"},
+  {id:84,cat:"code",icon:"⚡",logo:"claude.ai",ar:"Claude Code",en:"Claude Code",descAr:"أداة CLI من Anthropic لأتمتة البرمجة والتطوير عبر المحطة الطرفية.",descEn:"CLI tool from Anthropic for automating coding and development via terminal.",tags:["CLI","Agentic"],price:"paid",rating:4.8,url:"https://claude.ai/code"},
+  {id:85,cat:"code",icon:"🌐",logo:"v0.dev",ar:"v0 by Vercel",en:"v0 by Vercel",descAr:"توليد مكونات React وShadcn UI من وصف نصي بثوانٍ.",descEn:"Generate React and Shadcn UI components from text description in seconds.",tags:["React","UI"],price:"freemium",rating:4.7,url:"https://v0.dev"},
+
+  // WRITING
+  {id:100,cat:"writing",icon:"✍️",logo:"jasper.ai",ar:"Jasper AI",en:"Jasper AI",descAr:"أداة كتابة احترافية لتسويق المحتوى والمدونات والإعلانات.",descEn:"Professional writing tool for content marketing, blogs, and ads.",tags:["Marketing","Blogs"],price:"paid",rating:4.7,url:"https://jasper.ai"},
+  {id:101,cat:"writing",icon:"📝",logo:"copy.ai",ar:"Copy.ai",en:"Copy.ai",descAr:"توليد محتوى تسويقي، إعلانات، وبريد إلكتروني بسرعة.",descEn:"Generate marketing copy, ads, and emails quickly.",tags:["Copywriting","Email"],price:"freemium",rating:4.5,url:"https://copy.ai"},
+  {id:102,cat:"writing",icon:"🖊️",logo:"writesonic.com",ar:"Writesonic",en:"Writesonic",descAr:"كتابة مقالات SEO ومنشورات سوشيال ميديا بذكاء اصطناعي.",descEn:"Write SEO articles and social media posts with AI.",tags:["SEO","Social"],price:"freemium",rating:4.5,url:"https://writesonic.com"},
+  {id:103,cat:"writing",icon:"📄",logo:"grammarly.com",ar:"Grammarly",en:"Grammarly",descAr:"مصحح النحو والإملاء والأسلوب المدعوم بالذكاء الاصطناعي.",descEn:"AI-powered grammar, spelling, and style corrector.",tags:["Grammar","Editing"],price:"freemium",rating:4.8,url:"https://grammarly.com"},
+  {id:104,cat:"writing",icon:"📖",logo:"sudowrite.com",ar:"Sudowrite",en:"Sudowrite",descAr:"مساعد كتابة الروايات والقصص الإبداعية للكتّاب.",descEn:"Novel and creative story writing assistant for writers.",tags:["Fiction","Creative"],price:"paid",rating:4.5,url:"https://sudowrite.com"},
+
+  // RESEARCH
+  {id:120,cat:"research",icon:"🔬",logo:"consensus.app",ar:"Consensus",en:"Consensus",descAr:"محرك بحث علمي يستخرج الإجماع من الدراسات الأكاديمية.",descEn:"Scientific search engine extracting consensus from academic studies.",tags:["Academic","Science"],price:"freemium",rating:4.7,url:"https://consensus.app"},
+  {id:121,cat:"research",icon:"📊",logo:"elicit.com",ar:"Elicit",en:"Elicit",descAr:"مساعد بحثي يحلل الأوراق العلمية ويستخرج البيانات.",descEn:"Research assistant that analyzes scientific papers and extracts data.",tags:["Papers","Extract"],price:"freemium",rating:4.6,url:"https://elicit.com"},
+  {id:122,cat:"research",icon:"🧬",logo:"connectedpapers.com",ar:"Connected Papers",en:"Connected Papers",descAr:"رسم خريطة بصرية للأبحاث العلمية المترابطة.",descEn:"Visual mapping of interconnected scientific research.",tags:["Visual","Network"],price:"freemium",rating:4.5,url:"https://connectedpapers.com"},
+  {id:123,cat:"research",icon:"🤓",logo:"notebooklm.google.com",ar:"NotebookLM",en:"NotebookLM (Google)",descAr:"مساعد بحثي من Google يقرأ مستنداتك ويجيب من خلالها.",descEn:"Google research assistant that reads your documents and answers from them.",tags:["Google","Docs"],price:"free",rating:4.8,url:"https://notebooklm.google.com"},
+
+  // DESIGN
+  {id:140,cat:"design",icon:"🎨",logo:"figma.com",ar:"Figma AI",en:"Figma AI",descAr:"مميزات ذكاء اصطناعي مدمجة في Figma لتوليد التصاميم تلقائياً.",descEn:"AI features built into Figma for automatic design generation.",tags:["Figma","UI/UX"],price:"freemium",rating:4.7,url:"https://figma.com"},
+  {id:141,cat:"design",icon:"🖌️",logo:"looka.com",ar:"Looka",en:"Looka",descAr:"إنشاء شعارات وهوية بصرية للشركات بدقائق.",descEn:"Create logos and visual identity for companies in minutes.",tags:["Logo","Branding"],price:"freemium",rating:4.4,url:"https://looka.com"},
+  {id:142,cat:"design",icon:"🌟",logo:"khroma.co",ar:"Khroma",en:"Khroma",descAr:"توليد لوحات ألوان متناسقة بالذكاء الاصطناعي.",descEn:"Generate harmonious color palettes with AI.",tags:["Colors","Palette"],price:"free",rating:4.5,url:"https://khroma.co"},
+
+  // SEO / MARKETING
+  {id:160,cat:"seo",icon:"📈",logo:"semrush.com",ar:"Semrush AI",en:"Semrush AI",descAr:"منصة SEO والتسويق الرقمي المدعومة بذكاء اصطناعي.",descEn:"AI-powered SEO and digital marketing platform.",tags:["SEO","Analytics"],price:"paid",rating:4.8,url:"https://semrush.com"},
+  {id:161,cat:"seo",icon:"🔍",logo:"surferseo.com",ar:"Surfer SEO",en:"Surfer SEO",descAr:"تحسين المقالات للسيو بذكاء اصطناعي وتحليل المنافسين.",descEn:"Optimize articles for SEO with AI and competitor analysis.",tags:["Content","Rank"],price:"paid",rating:4.7,url:"https://surferseo.com"},
+  {id:162,cat:"seo",icon:"📣",logo:"adcreative.ai",ar:"AdCreative.ai",en:"AdCreative.ai",descAr:"توليد إعلانات وإبداعات تسويقية محوّلة بنسب عالية.",descEn:"Generate high-converting marketing ads and creatives.",tags:["Ads","ROI"],price:"paid",rating:4.5,url:"https://adcreative.ai"},
+
+  // PRODUCTIVITY
+  {id:180,cat:"productivity",icon:"⚡",logo:"notion.so",ar:"Notion AI",en:"Notion AI",descAr:"الذكاء الاصطناعي المدمج في Notion لتلخيص المحتوى والكتابة.",descEn:"AI built into Notion for content summarization and writing.",tags:["Notion","Notes"],price:"freemium",rating:4.7,url:"https://notion.ai"},
+  {id:181,cat:"productivity",icon:"📅",logo:"reclaim.ai",ar:"Reclaim AI",en:"Reclaim AI",descAr:"جدولة المهام تلقائياً في التقويم بناءً على أولوياتك.",descEn:"Automatically schedule tasks in your calendar based on priorities.",tags:["Calendar","Tasks"],price:"freemium",rating:4.5,url:"https://reclaim.ai"},
+  {id:182,cat:"productivity",icon:"✅",logo:"usemotion.com",ar:"Motion",en:"Motion",descAr:"تخطيط يومي ذكي يجدول يومك تلقائياً بأولويات ذكية.",descEn:"Smart daily planning that automatically schedules your day with intelligent priorities.",tags:["Planning","Auto"],price:"paid",rating:4.6,url:"https://usemotion.com"},
+
+  // EDUCATION
+  {id:200,cat:"edu",icon:"📚",logo:"khanmigo.ai",ar:"Khan Academy AI",en:"Khanmigo",descAr:"مساعد تعليمي من Khan Academy لشرح المناهج بأسلوب سقراطي.",descEn:"Educational assistant from Khan Academy explaining curriculum Socratically.",tags:["Learning","Tutor"],price:"freemium",rating:4.7,url:"https://khanmigo.ai"},
+  {id:201,cat:"edu",icon:"🎓",logo:"duolingo.com",ar:"Duolingo Max",en:"Duolingo Max",descAr:"تعلم اللغات مع مساعد ذكاء اصطناعي لمحادثات تفاعلية.",descEn:"Language learning with AI assistant for interactive conversations.",tags:["Languages","Practice"],price:"freemium",rating:4.8,url:"https://duolingo.com"},
+  {id:202,cat:"edu",icon:"🧑‍🏫",logo:"coursera.org",ar:"Coursera AI",en:"Coursera Coach",descAr:"مساعد تعليمي في Coursera يشرح المحاضرات ويختبرك.",descEn:"Educational assistant in Coursera that explains lectures and tests you.",tags:["Courses","Quiz"],price:"freemium",rating:4.6,url:"https://coursera.org"},
+
+  // BUSINESS
+  {id:220,cat:"business",icon:"💼",logo:"salesforce.com",ar:"Salesforce Einstein",en:"Salesforce Einstein",descAr:"ذكاء اصطناعي مدمج في CRM لتحليل المبيعات وتوقع الصفقات.",descEn:"AI built into CRM to analyze sales and predict deals.",tags:["CRM","Sales"],price:"paid",rating:4.7,url:"https://salesforce.com"},
+  {id:221,cat:"business",icon:"📧",logo:"superhuman.com",ar:"Superhuman AI",en:"Superhuman AI",descAr:"أسرع عميل بريد إلكتروني بذكاء اصطناعي لاختصار وقتك.",descEn:"The fastest AI email client to save your time.",tags:["Email","Speed"],price:"paid",rating:4.6,url:"https://superhuman.com"},
+  {id:222,cat:"business",icon:"📞",logo:"fireflies.ai",ar:"Fireflies.ai",en:"Fireflies.ai",descAr:"تسجيل وتحليل اجتماعات Zoom وTeams تلقائياً.",descEn:"Automatically record and analyze Zoom and Teams meetings.",tags:["Meetings","Transcribe"],price:"freemium",rating:4.7,url:"https://fireflies.ai"},
+
+  // DATA
+  {id:240,cat:"data",icon:"📊",logo:"julius.ai",ar:"Julius AI",en:"Julius AI",descAr:"تحليل البيانات وإنشاء الرسوم البيانية من ملفات CSV بالمحادثة.",descEn:"Analyze data and create charts from CSV files via conversation.",tags:["CSV","Charts"],price:"freemium",rating:4.6,url:"https://julius.ai"},
+  {id:241,cat:"data",icon:"🔢",logo:"rows.com",ar:"Rows AI",en:"Rows AI",descAr:"جداول بيانات ذكية بأوامر طبيعية تحل محل Excel.",descEn:"Smart spreadsheets with natural language commands replacing Excel.",tags:["Spreadsheet","NL"],price:"freemium",rating:4.5,url:"https://rows.com"},
+
+  // AVATAR
+  {id:260,cat:"avatar",icon:"👤",logo:"d-id.com",ar:"D-ID",en:"D-ID",descAr:"تحريك الصور وإنشاء مقدمي أخبار رقميين من صورة ثابتة.",descEn:"Animate images and create digital news presenters from a still photo.",tags:["Animate","Presenter"],price:"freemium",rating:4.6,url:"https://d-id.com"},
+  {id:261,cat:"avatar",icon:"🎭",logo:"synthesia.io",ar:"Synthesia",en:"Synthesia",descAr:"إنشاء فيديوهات تعليمية ومؤسسية بمقدمين رقميين واقعيين.",descEn:"Create educational and institutional videos with realistic digital presenters.",tags:["Corporate","Training"],price:"paid",rating:4.8,url:"https://synthesia.io"},
+
+  // TRANSLATE
+  {id:280,cat:"translate",icon:"🌍",logo:"deepl.com",ar:"DeepL",en:"DeepL",descAr:"أدق ترجمة آلية بذكاء اصطناعي تتفوق على Google Translate.",descEn:"The most accurate AI translation surpassing Google Translate.",tags:["Translation","Accurate"],price:"freemium",rating:4.9,url:"https://deepl.com"},
+  {id:281,cat:"translate",icon:"🗣️",logo:"openai.com",ar:"Whisper",en:"OpenAI Whisper",descAr:"تحويل الكلام إلى نص متعدد اللغات مفتوح المصدر من OpenAI.",descEn:"Multilingual open-source speech-to-text from OpenAI.",tags:["STT","Open-source"],price:"free",rating:4.7,url:"https://openai.com/research/whisper"},
+
+  // PRESENTATIONS
+  {id:300,cat:"present",icon:"📑",logo:"gamma.app",ar:"Gamma",en:"Gamma",descAr:"إنشاء عروض تقديمية احترافية ومواقع ووثائق من وصف نصي.",descEn:"Create professional presentations, websites, and docs from text.",tags:["Slides","Fast"],price:"freemium",rating:4.8,url:"https://gamma.app"},
+  {id:301,cat:"present",icon:"📊",logo:"beautiful.ai",ar:"Beautiful.ai",en:"Beautiful.ai",descAr:"تصميم شرائح ذكية تتكيف تلقائياً مع المحتوى.",descEn:"Smart slides that automatically adapt to content.",tags:["Smart","Design"],price:"freemium",rating:4.6,url:"https://beautiful.ai"},
+  {id:302,cat:"present",icon:"🎯",logo:"tome.app",ar:"Tome",en:"Tome",descAr:"توليد عروض تقديمية وسرد قصصي بالذكاء الاصطناعي.",descEn:"AI-powered presentation and storytelling generation.",tags:["Storytelling","AI"],price:"freemium",rating:4.5,url:"https://tome.app"},
+
+  // VOICE
+  {id:320,cat:"voice",icon:"🎤",logo:"otter.ai",ar:"Otter.ai",en:"Otter.ai",descAr:"تحويل الاجتماعات والمحاضرات إلى نص فوري مع ملخصات.",descEn:"Convert meetings and lectures to instant text with summaries.",tags:["Meetings","Notes"],price:"freemium",rating:4.7,url:"https://otter.ai"},
+  {id:321,cat:"voice",icon:"🎙️",logo:"descript.com",ar:"Descript",en:"Descript",descAr:"تحرير الصوت والفيديو كأنك تحرر نصاً، مع clone صوتي.",descEn:"Edit audio and video like editing text, with voice cloning.",tags:["Edit","Clone"],price:"freemium",rating:4.7,url:"https://descript.com"},
+
+  // LEGAL
+  {id:340,cat:"legal",icon:"⚖️",logo:"harvey.ai",ar:"Harvey AI",en:"Harvey AI",descAr:"ذكاء اصطناعي قانوني لمراجعة العقود والأبحاث القانونية.",descEn:"Legal AI for reviewing contracts and legal research.",tags:["Contracts","Legal"],price:"paid",rating:4.6,url:"https://harvey.ai"},
+  {id:341,cat:"legal",icon:"📋",logo:"ironcladapp.com",ar:"Ironclad AI",en:"Ironclad AI",descAr:"إدارة وتحليل العقود بذكاء اصطناعي للمؤسسات.",descEn:"AI contract management and analysis for enterprises.",tags:["CLM","Enterprise"],price:"paid",rating:4.5,url:"https://ironcladapp.com"},
+
+  // HEALTH
+  {id:360,cat:"health",icon:"🏥",logo:"ada.com",ar:"Ada Health",en:"Ada Health",descAr:"تشخيص الأعراض وتوجيه الرعاية الصحية بذكاء اصطناعي.",descEn:"AI-powered symptom diagnosis and healthcare guidance.",tags:["Symptoms","Diagnosis"],price:"free",rating:4.6,url:"https://ada.com"},
+  {id:361,cat:"health",icon:"💊",logo:"nabla.com",ar:"Nabla",en:"Nabla Copilot",descAr:"مساعد ذكاء اصطناعي للأطباء يكتب الملاحظات الطبية تلقائياً.",descEn:"AI assistant for doctors that automatically writes medical notes.",tags:["Medical","Doctors"],price:"freemium",rating:4.7,url:"https://nabla.com"},
+];
+
+let currentLang = 'ar';
+let currentCat = 'all';
+let searchTerm = '';
+
+const roadmapData = {
+  ar: [
+    {num:1, title:"حدد هدفك", desc:"هل تريد كتابة محتوى؟ برمجة؟ تصميم؟ ابدأ بتحديد احتياجاتك."},
+    {num:2, title:"استكشف الأقسام", desc:"تصفح الأقسام المتخصصة وابحث عن أدوات قسمك."},
+    {num:3, title:"جرب المجاني أولاً", desc:"ابدأ بالأدوات المجانية أو Freemium لفهم كيفية عملها."},
+    {num:4, title:"قارن وتعلم", desc:"استخدم أدوات متعددة وقارن النتائج لاختيار الأنسب."},
+    {num:5, title:"ادمج الأدوات", desc:"ادمج أدوات متعددة لسير عمل قوي ومتكامل."},
+    {num:6, title:"طور مهاراتك", desc:"تابع التحديثات والأدوات الجديدة باستمرار."},
+  ],
+  en: [
+    {num:1, title:"Define Your Goal", desc:"Do you want to write content? Code? Design? Start by identifying your needs."},
+    {num:2, title:"Explore Categories", desc:"Browse specialized categories and search for tools in your area."},
+    {num:3, title:"Try Free First", desc:"Start with free or Freemium tools to understand how they work."},
+    {num:4, title:"Compare & Learn", desc:"Use multiple tools and compare results to choose the best fit."},
+    {num:5, title:"Combine Tools", desc:"Combine multiple tools for a powerful, integrated workflow."},
+    {num:6, title:"Keep Learning", desc:"Continuously follow updates and new tools as they emerge."},
+  ]
+};
+
+function renderCats() {
+  const t = i18n[currentLang];
+  const container = document.getElementById('catsContainer');
+  container.innerHTML = '';
+  categories.forEach(cat => {
+    const chip = document.createElement('button');
+    chip.className = 'cat-chip' + (currentCat===cat.id?' active':'');
+    chip.innerHTML = `${cat.icon} ${currentLang==='ar'?cat.ar:cat.en}`;
+    chip.onclick = () => { currentCat=cat.id; render(); };
+    container.appendChild(chip);
+  });
+}
+
+function renderTools() {
+  const t = i18n[currentLang];
+  const grid = document.getElementById('toolsGrid');
+  const badge = document.getElementById('countBadge');
+
+  let filtered = tools.filter(tool => {
+    const catMatch = currentCat==='all' || tool.cat===currentCat;
+    const q = searchTerm.toLowerCase();
+    const textMatch = !q ||
+      tool.ar.toLowerCase().includes(q) ||
+      tool.en.toLowerCase().includes(q) ||
+      (currentLang==='ar'?tool.descAr:tool.descEn).toLowerCase().includes(q) ||
+      tool.tags.some(tag=>tag.toLowerCase().includes(q));
+    return catMatch && textMatch;
+  });
+
+  badge.textContent = currentLang==='ar'
+    ? `${filtered.length} أداة`
+    : `${filtered.length} tools`;
+
+  if (!filtered.length) {
+    grid.innerHTML = `<div class="no-results"><div class="no-results-icon">🔍</div>${t.noResults}</div>`;
+    return;
+  }
+
+  grid.innerHTML = '';
+  const priceLabel = {free:t.free,paid:t.paid,freemium:t.freemium};
+  const priceClass = {free:'price-free',paid:'price-paid',freemium:'price-freemium'};
+  const stars = (r) => '★'.repeat(Math.floor(r)) + (r%1>=0.5?'½':'');
+
+  filtered.slice(0,48).forEach((tool,i) => {
+    const card = document.createElement('div');
+    card.className = 'tool-card';
+    card.style.animationDelay = (i*0.04)+'s';
+    const name = currentLang==='ar'?tool.ar:tool.en;
+    const desc = currentLang==='ar'?tool.descAr:tool.descEn;
+    card.innerHTML = `
+      <div class="tool-header">
+        <div class="tool-icon">
+          <img 
+            src="https://www.google.com/s2/favicons?domain=${tool.logo}&sz=64" 
+            alt="${name} logo"
+            onerror="this.classList.add('logo-error')"
+            loading="lazy"
+          >
+          <span class="fallback-emoji">${tool.icon}</span>
+        </div>
+        <div class="tool-meta">
+          <div class="tool-name">${name}</div>
+          <div class="tool-tags">${tool.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+        </div>
+      </div>
+      <div class="tool-desc">${desc}</div>
+      <div class="tool-footer">
+        <span class="tool-price ${priceClass[tool.price]}">${priceLabel[tool.price]}</span>
+        <div class="tool-rating"><span class="stars">${stars(tool.rating)}</span> ${tool.rating}</div>
+        <a href="${tool.url}" target="_blank" class="visit-btn">${t.visit}</a>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+function renderRoadmap() {
+  const steps = roadmapData[currentLang];
+  const t = i18n[currentLang];
+  document.getElementById('roadmapTitle').textContent = t.roadmapTitle;
+  const container = document.getElementById('roadmapSteps');
+  container.innerHTML = '';
+  steps.forEach(s => {
+    const div = document.createElement('div');
+    div.className = 'step';
+    div.innerHTML = `<div class="step-num">${s.num}</div><div class="step-title">${s.title}</div><div class="step-desc">${s.desc}</div>`;
+    container.appendChild(div);
+  });
+}
+
+function applyLang() {
+  const t = i18n[currentLang];
+  document.documentElement.lang = t.lang;
+  document.documentElement.dir = t.dir;
+  document.getElementById('heroBadge').textContent = t.heroBadge.replace('🔴 ','');
+  document.getElementById('heroBadge').innerHTML = t.heroBadge;
+  document.getElementById('heroTitle').innerHTML = t.heroTitle;
+  document.getElementById('heroSub').textContent = t.heroSub;
+  document.getElementById('searchInput').placeholder = t.searchPlaceholder;
+  document.getElementById('s1').textContent = t.s1;
+  document.getElementById('sl1').textContent = t.sl1;
+  document.getElementById('s2').textContent = t.s2;
+  document.getElementById('sl2').textContent = t.sl2;
+  document.getElementById('s3').textContent = t.s3;
+  document.getElementById('sl3').textContent = t.sl3;
+  document.getElementById('fbLabel').textContent = t.fbLabel;
+  document.getElementById('fbTitle').textContent = t.fbTitle;
+  document.getElementById('fbDesc').textContent = t.fbDesc;
+  document.getElementById('fbBtn').textContent = t.fbBtn;
+  document.getElementById('catTitle').innerHTML = `📁 ${currentLang==='ar'?'الأقسام':'Categories'}`;
+  document.getElementById('toolsTitle').innerHTML = `🛠️ ${currentLang==='ar'?'الأدوات':'Tools'}`;
+  document.getElementById('langBtn').textContent = t.langBtn;
+  // search icon direction
+  const si = document.querySelector('.search-icon');
+  if(currentLang==='en') { si.style.left='auto'; si.style.right='18px'; }
+  else { si.style.right='auto'; si.style.left='18px'; }
+}
+
+function render() {
+  applyLang();
+  renderCats();
+  renderTools();
+  renderRoadmap();
+}
+
+document.getElementById('langBtn').onclick = () => {
+  currentLang = currentLang==='ar'?'en':'ar';
+  render();
+};
+
+let isDark = true;
+document.getElementById('themeBtn').onclick = () => {
+  isDark = !isDark;
+  document.documentElement.setAttribute('data-theme', isDark?'':'light');
+  document.getElementById('themeBtn').textContent = isDark?'🌙':'☀️';
+};
+
+document.getElementById('searchInput').addEventListener('input', e => {
+  searchTerm = e.target.value;
+  renderTools();
+});
+
+render();
+</script>
+</body>
+</html>
